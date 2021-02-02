@@ -1,15 +1,256 @@
 #pragma once
 
-class misc : public singleton<misc>
+class QAngle;
+class Vector;
+
+class CUserCmd
 {
 public:
-	static void guard_detect();
-	static void update_keybinds();
-	static void bhop();
-	static void remove_smoke( ClientFrameStage_t stage );
-	static void remove_flash( ClientFrameStage_t stage );
-	static void radar();
-	static void reveal_ranks();
-	static void clan_tag();
-	static void chat_spam();
+	virtual ~CUserCmd() {};
+	int		command_number;
+	int		tick_count;
+	QAngle	viewangles;
+	Vector	aimdirection;
+	float	forwardmove;
+	float	sidemove;
+	float	upmove;
+	int		buttons;
+	byte    impulse;
+	int		weaponselect;
+	int		weaponsubtype;
+	int		random_seed;
+	short	mousedx;
+	short	mousedy;
+	bool	hasbeenpredicted;
+	char	pad_0[ 0x18 ];
+};
+
+class strike_weapon_definition
+{
+public:
+	char pad_0[0x8];		//0x0
+	int m_nWeaponID;		//0x8
+};
+
+class CCSWeaponData
+{
+public:
+	virtual	~CCSWeaponData() {};// 0x0
+	char* consoleName;			// 0x4
+	char		pad_0[0xc];			// 0x8
+	int32_t		iMaxClip1;				// 0x14
+	int32_t		iMaxClip2;				// 0x18
+	int32_t		iDefaultClip1;			// 0x1c
+	int32_t		iDefaultClip2;			// 0x20
+	int32_t		iPrimaryReserveAmmoMax; // 0x24
+	int32_t		iSecondaryReserveAmmoMax; // 0x28
+	char* szWorldModel;			// 0x2c
+	char* szViewModel;			// 0x30
+	char* szDroppedModel;			// 0x34
+	char		pad_9[0x50];			// 0x38
+	char* szHudName;				// 0x88
+	char* szWeaponName;			// 0x8c
+	char		pad_11[0x2];			// 0x90
+	bool		bIsMeleeWeapon;			// 0x92
+	char		pad_12[0x9];			// 0x93
+	float_t		flWeaponWeight;			// 0x9c
+	char		pad_13[0x2c];			// 0xa0
+	int32_t		iWeaponType;			// 0xcc
+	int32_t		iWeaponPrice;			// 0xd0
+	int32_t		iKillAward;				// 0xd4
+	char		pad_16[0x4];			// 0xd8
+	float_t		flCycleTime;			// 0xdc
+	float_t		flCycleTimeAlt;			// 0xe0
+	char		pad_18[0x8];			// 0xe4
+	bool		bFullAuto;				// 0xec
+	char		pad_19[0x3];			// 0xed
+	int32_t		iDamage;				// 0xf0
+	float_t		flArmorRatio;			// 0xf4
+	int32_t		iBullets;				// 0xf8
+	float_t		flPenetration;			// 0xfc
+	char		pad_23[0x8];			// 0x100
+	float_t		flWeaponRange;			// 0x108
+	float_t		flRangeModifier;		// 0x10c
+	float_t		flThrowVelocity;		// 0x110
+	char		pad_26[0xc];			// 0x114
+	bool		bHasSilencer;			// 0x120
+	char		pad_27[0xb];			// 0x121
+	char* szBulletType;			// 0x12c
+	float_t		flMaxSpeed;				// 0x130
+	float_t		flMaxSpeedAlt;			// 0x134
+	float		flSpread;				// 0x138
+	float		flSpreadAlt;			// 0x13C
+	float		flInaccuracyCrouch;		// 0x140
+	float		flInaccuracyCrouchAlt;	// 0x144
+	float		flInaccuracyStand;		// 0x148
+	float		flInaccuracyStandAlt;	// 0x14C
+	char		pad_29[0x34];			// 0x150
+	int32_t		iRecoilSeed;			// 0x184
+};
+
+class CViewSetup
+{
+public:
+	int			x, x_old;
+	int			y, y_old;
+	int			width, width_old;
+	int			height, height_old;
+	bool		m_bOrtho;
+	float		m_OrthoLeft;
+	float		m_OrthoTop;
+	float		m_OrthoRight;
+	float		m_OrthoBottom;
+	bool		m_bCustomViewMatrix;
+	matrix3x4_t	m_matCustomViewMatrix;
+	char		pad_1[ 0x48 ];
+	float		fov;
+	float		fovViewmodel;
+	Vector		origin;
+	QAngle		angles;
+	float		zNear;
+	float		zFar;
+	float		zNearViewmodel;
+	float		zFarViewmodel;
+	float		m_flAspectRatio;
+	float		m_flNearBlurDepth;
+	float		m_flNearFocusDepth;
+	float		m_flFarFocusDepth;
+	float		m_flFarBlurDepth;
+	float		m_flNearBlurRadius;
+	float		m_flFarBlurRadius;
+	int			m_nDoFQuality;
+	int			m_nMotionBlurMode;
+	float		m_flShutterTime;
+	Vector		m_vShutterOpenPosition;
+	QAngle		m_shutterOpenAngles;
+	Vector		m_vShutterClosePosition;
+	QAngle		m_shutterCloseAngles;
+	float		m_flOffCenterTop;
+	float		m_flOffCenterBottom;
+	float		m_flOffCenterLeft;
+	float		m_flOffCenterRight;
+	int			m_EdgeBlur;
+};
+
+class VarMapEntry_t
+{
+public:
+	unsigned short type;
+	unsigned short m_bNeedsToInterpolate;	// Set to false when this var doesn't
+											// need Interpolate() called on it anymore.
+	void *data;
+	void *watcher;
+};
+
+class Quaternion				// same data-layout as engine's vec4_t,
+{								//		which is a float[4]
+public:
+	inline Quaternion( void ) {}
+	inline Quaternion( float ix, float iy, float iz, float iw ) : x( ix ), y( iy ), z( iz ), w( iw ) {}
+
+	inline void Init( float ix = 0.0f, float iy = 0.0f, float iz = 0.0f, float iw = 0.0f ) { x = ix; y = iy; z = iz; w = iw; }
+
+	float* Base() { return ( float* )this; }
+	const float* Base() const { return ( float* )this; }
+
+	float x, y, z, w;
+};
+
+class ALIGN16 QuaternionAligned : public Quaternion
+{
+public:
+	inline QuaternionAligned( void ) {};
+	inline QuaternionAligned( float X, float Y, float Z, float W )
+	{
+		Init( X, Y, Z, W );
+	}
+public:
+	explicit QuaternionAligned( const Quaternion &vOther )
+	{
+		Init( vOther.x, vOther.y, vOther.z, vOther.w );
+	}
+
+	QuaternionAligned& operator=( const Quaternion &vOther )
+	{
+		Init( vOther.x, vOther.y, vOther.z, vOther.w );
+		return *this;
+	}
+};
+
+class C_AnimationLayer
+{
+public:
+	char		pad_0[0x14];			//0x0
+	uint32_t	m_nOrder;				//0x14
+	uint32_t	m_nSequence;			//0x18
+	float_t		m_flPrevCycle;			//0x1C
+	float_t		m_flWeight;				//0x20
+	float_t		m_flWeightDeltaRate;	//0x24
+	float_t		m_flPlaybackRate;		//0x28
+	float_t		m_flCycle;				//0x2C
+	void		*m_pOwner;				//0x30
+	char		pad_1[ 0x4 ];			//0x34
+};
+
+class ClientClass;
+class CEventInfo
+{
+public:
+	uint16_t		classID;			//0x0
+	char			pad_0[ 0x2 ];		//0x2 
+	float			fire_delay;			//0x4
+	char			pad_1[ 0x4 ];		//0x8
+	ClientClass*	pClientClass;		//0xC
+	void*			pData;				//0x10
+	char			pad_2[ 0x30 ];		//0x14
+};
+
+class C_TEFireBullets
+{
+public:
+	char		pad_0[ 0xc ];
+	int			m_iPlayer;
+	int			_m_iItemDefinitionIndex;
+	Vector		_m_vecOrigin;
+	QAngle		m_vecAngles;
+	int			_m_iWeaponID;
+	int			m_iMode;
+	int			m_iSeed;
+	float		m_flSpread;
+};
+
+struct Item_t
+{
+	Item_t( std::string model, std::string icon = "" ) :
+		model( model ),
+		icon( icon )
+	{
+	}
+
+	std::string model;
+	std::string icon;
+};
+
+struct WeaponName_t
+{
+	WeaponName_t( int definition_index, std::string name ) :
+		definition_index( definition_index ),
+		name( name )
+	{
+	}
+
+	int definition_index = 0;
+	std::string name = nullptr;
+};
+
+struct QualityName_t
+{
+	QualityName_t( int index, std::string name ) :
+		index( index ),
+		name( name )
+	{
+	}
+
+	int index = 0;
+	std::string name;
 };
