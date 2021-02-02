@@ -1,0 +1,50 @@
+#include "../include_cheat.h"
+
+c_hook* hooks::client = nullptr;
+c_hook* hooks::clientmode = nullptr;
+c_hook* hooks::engine = nullptr;
+c_hook* hooks::predict = nullptr;
+c_hook* hooks::modelrender = nullptr;
+c_hook* hooks::viewrender = nullptr;
+c_hook* hooks::renderview = nullptr;
+c_hook* hooks::vpanel = nullptr;
+c_hook* hooks::device = nullptr;
+c_hook* hooks::engine_sound = nullptr;
+c_hook* hooks::surface = nullptr;
+c_bphook* hooks::clientstateplus8 = nullptr;
+c_bphook* hooks::ccsplayer = nullptr;
+c_bphook* hooks::ccsplayerrenderable = nullptr;
+c_hook* hooks::net_channel = nullptr;
+c_hook* hooks::sv_cheats = nullptr;
+
+recv_prop_hook* hooks::smoke_prop = nullptr;
+
+WNDPROC hooks::orig_wnd_proc;
+hooks::create_move_fn hooks::orig_create_move;
+hooks::frame_stage_notify_fn hooks::orig_frame_stage_notify;
+hooks::draw_model_execute_fn hooks::orig_draw_model_execute;
+hooks::render_view_fn hooks::orig_render_view;
+hooks::scene_end_fn hooks::orig_scene_end;
+hooks::get_bool_fn hooks::orig_sv_cheats_get_bool;
+hooks::do_post_screen_space_effects_fn hooks::orig_do_post_screen_space_effects;
+hooks::present_fn hooks::orig_present;
+hooks::reset_fn hooks::orig_reset;
+hooks::send_net_msg_fn hooks::orig_send_net_msg;
+hooks::is_hltv_fn hooks::orig_is_hltv;
+hooks::paint_traverse_fn hooks::orig_paint_traverse;
+hooks::override_view_fn hooks::orig_override_view;
+hooks::emit_sound_fn hooks::orig_emit_sound;
+hooks::temp_entities_fn hooks::orig_temp_entities;
+hooks::do_extra_bone_processing_fn hooks::orig_do_extra_bone_processing;
+hooks::should_skip_animframe_fn hooks::orig_should_skip_animframe;
+hooks::run_command_fn hooks::orig_run_command;
+hooks::write_user_cmd_delta_to_buffer_fn hooks::orig_write_user_cmd_delta_to_buffer;
+hooks::play_sound_fn hooks::orig_play_sound;
+hooks::is_connected_fn hooks::orig_is_connected;
+hooks::eye_angles_fn hooks::orig_eye_angles;
+hooks::standard_blending_rules_fn hooks::orig_standard_blending_rules;
+hooks::update_client_side_animation_fn hooks::orig_update_client_side_animation;
+hooks::build_transformations_fn hooks::orig_build_transformations;
+hooks::fire_event_fn hooks::orig_fire_event;
+hooks::cursor_fn hooks::orig_lock_cursor;
+RecvVarProxyFn hooks::orig_smoke_effect;
